@@ -1,0 +1,78 @@
+name: ActivityTracker
+options:
+  bundleIdPrefix: dev.pr0ducer
+  deploymentTarget:
+    watchOS: "26.0"
+  createIntermediateGroups: true
+  groupSortPosition: top
+
+packages:
+  ActivityTracker:
+    path: ../Packages/ActivityTracker
+
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    SWIFT_STRICT_CONCURRENCY: complete
+
+targets:
+  ActivityTracker:
+    type: application
+    platform: watchOS
+    sources:
+      - path: Watch
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: dev.pr0ducer.ActivityTracker
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        GENERATE_INFOPLIST_FILE: false
+        INFOPLIST_FILE: Watch/Info.plist
+        CODE_SIGN_ENTITLEMENTS: Watch/ActivityTracker.entitlements
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        TARGETED_DEVICE_FAMILY: "4"
+        WATCHOS_DEPLOYMENT_TARGET: "26.0"
+    dependencies:
+      - package: ActivityTracker
+        product: AppFeature
+      - target: ActivityTrackerWidget
+        embed: true
+    scheme:
+      testTargets: []
+
+  ActivityTrackerWidget:
+    type: app-extension
+    platform: watchOS
+    sources:
+      - path: Widget
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: dev.pr0ducer.ActivityTracker.Widget
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        GENERATE_INFOPLIST_FILE: false
+        INFOPLIST_FILE: Widget/Info.plist
+        CODE_SIGN_ENTITLEMENTS: Widget/ActivityWidget.entitlements
+        WATCHOS_DEPLOYMENT_TARGET: "26.0"
+        APPLICATION_EXTENSION_API_ONLY: YES
+    dependencies:
+      - package: ActivityTracker
+        product: ActivityWidgetUI
+      - package: ActivityTracker
+        product: ActivityIntents
+      - package: ActivityTracker
+        product: Database
+      - package: ActivityTracker
+        product: Shared
+    scheme: {}
+
+schemes:
+  ActivityTracker:
+    build:
+      targets:
+        ActivityTracker: all
+        ActivityTrackerWidget: all
+    run:
+      config: Debug
+    archive:
+      config: Release
