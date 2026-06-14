@@ -88,6 +88,12 @@ let package = Package(
       ]
     ),
     .testTarget(
+      name: "ActivityWidgetUITests",
+      dependencies: [
+        "ActivityWidgetUI",
+      ]
+    ),
+    .testTarget(
       name: "ActivityIntentsTests",
       dependencies: [
         "ActivityIntents",

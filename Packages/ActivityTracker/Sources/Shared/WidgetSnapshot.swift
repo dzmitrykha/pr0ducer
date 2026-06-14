@@ -8,4 +8,13 @@ public struct WidgetSnapshot: Equatable, Sendable {
     self.isActive = isActive
     self.todayCount = todayCount
   }
+
+  /// Formats today's count for the small complication surface (caps at 99+).
+  public var countDisplayText: String {
+    Self.countDisplayText(for: todayCount)
+  }
+
+  public static func countDisplayText(for count: Int) -> String {
+    count > 99 ? "99+" : "\(count)"
+  }
 }

@@ -9,8 +9,7 @@ struct ActivityWidgetBundle: WidgetBundle {
   }
 
   var body: some Widget {
-    // Phase 2 spike widgets — replaced by real complications in Phase 3.
-    SpikeToggleComplication()
-    SpikeOpenAppComplication()
+    ToggleActivityComplication()
+    OpenAppComplication()
   }
 }
