@@ -26,7 +26,11 @@ let package = Package(
   ],
   targets: [
     .target(
-      name: "Shared"
+      name: "Shared",
+      dependencies: [
+        .product(name: "Dependencies", package: "swift-dependencies"),
+        .product(name: "DependenciesMacros", package: "swift-dependencies"),
+      ]
     ),
     .target(
       name: "Database",
@@ -108,8 +112,12 @@ let package = Package(
       name: "DayListFeatureTests",
       dependencies: [
         "DayListFeature",
+        "Database",
+        "Shared",
         .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
         .product(name: "CustomDump", package: "swift-custom-dump"),
+        .product(name: "Dependencies", package: "swift-dependencies"),
+        .product(name: "DependenciesTestSupport", package: "swift-dependencies"),
       ]
     ),
     .testTarget(
@@ -124,8 +132,12 @@ let package = Package(
       name: "AppFeatureTests",
       dependencies: [
         "AppFeature",
+        "Database",
+        "Shared",
         .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
         .product(name: "CustomDump", package: "swift-custom-dump"),
+        .product(name: "Dependencies", package: "swift-dependencies"),
+        .product(name: "DependenciesTestSupport", package: "swift-dependencies"),
       ]
     ),
   ],
