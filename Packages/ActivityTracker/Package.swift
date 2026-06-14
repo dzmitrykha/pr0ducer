@@ -15,6 +15,7 @@ let package = Package(
     .library(name: "ActivityWidgetUI", targets: ["ActivityWidgetUI"]),
     .library(name: "ActivityIntents", targets: ["ActivityIntents"]),
     .library(name: "DayListFeature", targets: ["DayListFeature"]),
+    .library(name: "DayDetailFeature", targets: ["DayDetailFeature"]),
     .library(name: "ActivitySessionFeature", targets: ["ActivitySessionFeature"]),
     .library(name: "AppFeature", targets: ["AppFeature"]),
   ],
@@ -66,6 +67,14 @@ let package = Package(
       ]
     ),
     .target(
+      name: "DayDetailFeature",
+      dependencies: [
+        "Database",
+        "Shared",
+        .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+      ]
+    ),
+    .target(
       name: "ActivitySessionFeature",
       dependencies: [
         "Database",
@@ -77,6 +86,7 @@ let package = Package(
       name: "AppFeature",
       dependencies: [
         "DayListFeature",
+        "DayDetailFeature",
         "ActivitySessionFeature",
         "ActivityIntents",
         "Database",
@@ -115,6 +125,18 @@ let package = Package(
       name: "DayListFeatureTests",
       dependencies: [
         "DayListFeature",
+        "Database",
+        "Shared",
+        .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+        .product(name: "CustomDump", package: "swift-custom-dump"),
+        .product(name: "Dependencies", package: "swift-dependencies"),
+        .product(name: "DependenciesTestSupport", package: "swift-dependencies"),
+      ]
+    ),
+    .testTarget(
+      name: "DayDetailFeatureTests",
+      dependencies: [
+        "DayDetailFeature",
         "Database",
         "Shared",
         .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),

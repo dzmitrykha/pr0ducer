@@ -32,6 +32,37 @@ public enum L10n {
 
   public static var dayAccessibilityHint: String { string("day.accessibility.hint") }
 
+  public static var dayDetailDelete: String { string("day.detail.delete") }
+  public static var dayDetailEmptyTitle: String { string("day.detail.empty.title") }
+  public static var dayDetailEmptyMessage: String { string("day.detail.empty.message") }
+  public static var dayDetailInProgress: String { string("day.detail.in.progress") }
+  public static var dayDetailNow: String { string("day.detail.now") }
+
+  public static func dayDetailDuration(minutes: Int) -> String {
+    String(format: string("day.detail.duration"), minutes)
+  }
+
+  public static func dayDetailIntervalAccessibility(
+    start: String,
+    end: String,
+    minutes: Int,
+    isInProgress: Bool
+  ) -> String {
+    if isInProgress {
+      return String(
+        format: string("day.detail.interval.accessibility.in.progress"),
+        start,
+        minutes
+      )
+    }
+    return String(
+      format: string("day.detail.interval.accessibility"),
+      start,
+      end,
+      minutes
+    )
+  }
+
   public static func hourTrackAccessibility(segmentCount: Int) -> String {
     String(format: string("hour.track.accessibility"), segmentCount)
   }

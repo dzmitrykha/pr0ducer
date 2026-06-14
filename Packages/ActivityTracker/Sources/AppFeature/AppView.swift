@@ -1,5 +1,6 @@
 import ActivitySessionFeature
 import ComposableArchitecture
+import DayDetailFeature
 import DayListFeature
 import SwiftUI
 
@@ -11,9 +12,16 @@ public struct AppView: View {
   }
 
   public var body: some View {
-    DayListView(
-      store: store.scope(state: \.dayList, action: \.dayList)
-    )
+    NavigationStack {
+      DayListView(
+        store: store.scope(state: \.dayList, action: \.dayList)
+      )
+      .navigationDestination(item: dayDetailBinding) { _ in
+        if let detailStore = store.scope(state: \.dayDetail, action: \.dayDetail) {
+          DayDetailView(store: detailStore)
+        }
+      }
+    }
     .sheet(
       isPresented: Binding(
         get: { store.session != nil },
@@ -31,5 +39,16 @@ public struct AppView: View {
     .onAppear {
       store.send(.onAppear)
     }
+  }
+
+  private var dayDetailBinding: Binding<DayDetailFeature.State?> {
+    Binding(
+      get: { store.dayDetail },
+      set: { newValue in
+        if newValue == nil {
+          store.send(.dayDetailDismissed)
+        }
+      }
+    )
   }
 }

@@ -3,6 +3,7 @@ App/*.xcodeproj/
 *.xcuserstate
 *.xcuserdata/
 DerivedData/
+.derivedData/
 build/
 
 # Swift Package Manager

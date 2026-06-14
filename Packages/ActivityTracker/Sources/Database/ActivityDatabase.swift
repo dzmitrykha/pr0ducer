@@ -20,6 +20,7 @@ public struct ActivityDatabase: Sendable {
   public var start: @Sendable (_ now: Date) async throws -> Activity
   public var stop: @Sendable (_ now: Date) async throws -> Void
   public var toggle: @Sendable (_ now: Date) async throws -> WidgetSnapshot
+  public var delete: @Sendable (_ id: UUID) async throws -> Void = { _ in }
   public var deleteAll: @Sendable () async throws -> Void = { }
 }
 
@@ -108,6 +109,15 @@ extension ActivityDatabase {
           }
         }
         return try makeSnapshot(database: database)
+      },
+      delete: { id in
+        let normalizedID = Activity.normalizedID(id)
+        try database.write { db in
+          try ActivityRecord
+            .where { $0.id.eq(normalizedID) }
+            .delete()
+            .execute(db)
+        }
       },
       deleteAll: {
         try database.write { db in

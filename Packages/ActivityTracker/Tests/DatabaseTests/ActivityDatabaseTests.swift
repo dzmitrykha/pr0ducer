@@ -210,6 +210,29 @@ struct ActivityDatabaseTests {
     #expect(!activities.contains(where: { $0.id.uuidString.lowercased() == "00000000-0000-0000-0000-000000000013" }))
   }
 
+  @Test func deleteRemovesSingleActivity() async throws {
+    let fixedDate = makeDate(year: 2026, month: 6, day: 14, hour: 10)
+    let activityID = UUID(uuidString: "00000000-0000-0000-0000-000000000001")!
+    try await withClient(now: fixedDate) { database, client in
+      try await database.write { db in
+        let record = ActivityRecord(
+          id: Activity.normalizedID(activityID),
+          startedAt: EpochDate.encode(fixedDate),
+          endedAt: EpochDate.encode(fixedDate.addingTimeInterval(600)),
+          createdAt: EpochDate.encode(fixedDate)
+        )
+        try ActivityRecord.insert { record }.execute(db)
+      }
+
+      try await client.delete(activityID)
+
+      let count = try await database.read { db in
+        try ActivityRecord.fetchCount(db)
+      }
+      #expect(count == 0)
+    }
+  }
+
   @Test func snapshotReflectsActiveStateAndTodayCount() async throws {
     let fixedDate = makeDate(year: 2026, month: 6, day: 14, hour: 10)
     try await withClient(now: fixedDate) { _, client in

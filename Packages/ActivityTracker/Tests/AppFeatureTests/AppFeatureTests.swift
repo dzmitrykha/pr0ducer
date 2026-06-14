@@ -3,6 +3,7 @@ import ActivitySessionFeature
 import ComposableArchitecture
 import CustomDump
 import Database
+import DayDetailFeature
 import DayListFeature
 import Dependencies
 import DependenciesTestSupport
@@ -96,21 +97,29 @@ struct AppFeatureTests {
     #expect(store.state.dayList.referenceDate == fixedDate)
   }
 
-  @Test func dayCardTapStoresSelectedDay() async {
+  @Test func dayCardTapPresentsDayDetail() async {
     let card = DayCard(
       date: makeDate(year: 2026, month: 6, day: 14, hour: 0),
       count: 2,
       segments: []
     )
+    let referenceDate = makeDate(year: 2026, month: 6, day: 14, hour: 10)
 
-    let store = TestStore(initialState: AppFeature.State()) {
+    let store = TestStore(
+      initialState: AppFeature.State(
+        dayList: DayListFeature.State(referenceDate: referenceDate)
+      )
+    ) {
       AppFeature()
     } withDependencies: {
       $0.pendingActionStore = .testValue
     }
 
     await store.send(.dayList(.dayCardTapped(card))) {
-      $0.selectedDay = card
+      $0.dayDetail = DayDetailFeature.State(
+        dayStart: card.date,
+        referenceDate: referenceDate
+      )
     }
   }
 

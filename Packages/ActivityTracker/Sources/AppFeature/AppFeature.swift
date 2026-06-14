@@ -1,5 +1,6 @@
 import ActivitySessionFeature
 import ComposableArchitecture
+import DayDetailFeature
 import DayListFeature
 import Shared
 import SwiftUI
@@ -9,16 +10,16 @@ public struct AppFeature: Sendable {
   @ObservableState
   public struct State: Equatable {
     public var dayList = DayListFeature.State()
-    public var selectedDay: DayCard?
+    public var dayDetail: DayDetailFeature.State?
     @Presents public var session: ActivitySessionFeature.State?
 
     public init(
       dayList: DayListFeature.State = DayListFeature.State(),
-      selectedDay: DayCard? = nil,
+      dayDetail: DayDetailFeature.State? = nil,
       session: ActivitySessionFeature.State? = nil
     ) {
       self.dayList = dayList
-      self.selectedDay = selectedDay
+      self.dayDetail = dayDetail
       self.session = session
     }
   }
@@ -29,6 +30,8 @@ public struct AppFeature: Sendable {
     case deepLink(URL)
     case presentSession(ActivitySessionFeature.SessionAction)
     case dayList(DayListFeature.Action)
+    case dayDetail(DayDetailFeature.Action)
+    case dayDetailDismissed
     case session(PresentationAction<ActivitySessionFeature.Action>)
   }
 
@@ -65,7 +68,17 @@ public struct AppFeature: Sendable {
         return .none
 
       case let .dayList(.dayCardTapped(card)):
-        state.selectedDay = card
+        state.dayDetail = DayDetailFeature.State(
+          dayStart: card.date,
+          referenceDate: state.dayList.referenceDate
+        )
+        return .none
+
+      case .dayDetail(.delegate(.dataChanged)):
+        return .send(.dayList(.refresh))
+
+      case .dayDetailDismissed:
+        state.dayDetail = nil
         return .none
 
       case .session(.presented(.delegate(.finished))):
@@ -77,9 +90,12 @@ public struct AppFeature: Sendable {
       case .session(.presented(.delegate(.cancelled))):
         return .send(.session(.dismiss))
 
-      case .dayList, .session:
+      case .dayList, .dayDetail, .session:
         return .none
       }
+    }
+    .ifLet(\.dayDetail, action: \.dayDetail) {
+      DayDetailFeature()
     }
     .ifLet(\.$session, action: \.session) {
       ActivitySessionFeature()
