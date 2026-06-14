@@ -1,3 +1,4 @@
+import ActivitySessionFeature
 import ComposableArchitecture
 import DayListFeature
 import Shared
@@ -9,13 +10,16 @@ public struct AppFeature: Sendable {
   public struct State: Equatable {
     public var dayList = DayListFeature.State()
     public var selectedDay: DayCard?
+    @Presents public var session: ActivitySessionFeature.State?
 
     public init(
       dayList: DayListFeature.State = DayListFeature.State(),
-      selectedDay: DayCard? = nil
+      selectedDay: DayCard? = nil,
+      session: ActivitySessionFeature.State? = nil
     ) {
       self.dayList = dayList
       self.selectedDay = selectedDay
+      self.session = session
     }
   }
 
@@ -23,7 +27,9 @@ public struct AppFeature: Sendable {
     case onAppear
     case scenePhaseChanged(ScenePhase)
     case deepLink(URL)
+    case presentSession(ActivitySessionFeature.SessionAction)
     case dayList(DayListFeature.Action)
+    case session(PresentationAction<ActivitySessionFeature.Action>)
   }
 
   public init() {}
@@ -54,13 +60,29 @@ public struct AppFeature: Sendable {
         guard let deepLink = DeepLink(url: url) else { return .none }
         return handle(deepLink: deepLink)
 
+      case let .presentSession(sessionAction):
+        state.session = ActivitySessionFeature.State(pendingAction: sessionAction)
+        return .none
+
       case let .dayList(.dayCardTapped(card)):
         state.selectedDay = card
         return .none
 
-      case .dayList:
+      case .session(.presented(.delegate(.finished))):
+        return .merge(
+          .send(.dayList(.refresh)),
+          .send(.session(.dismiss))
+        )
+
+      case .session(.presented(.delegate(.cancelled))):
+        return .send(.session(.dismiss))
+
+      case .dayList, .session:
         return .none
       }
+    }
+    .ifLet(\.$session, action: \.session) {
+      ActivitySessionFeature()
     }
   }
 
@@ -74,7 +96,14 @@ public struct AppFeature: Sendable {
   private func resolvePendingAction() -> Effect<Action> {
     .run { [pendingActionStore] send in
       guard let pending = pendingActionStore.consume() else { return }
-      await send(.deepLink(pending.deepLink.url))
+      switch pending {
+      case .open:
+        await send(.deepLink(DeepLink.open.url))
+      case .confirmStart:
+        await send(.presentSession(.start))
+      case .confirmStop:
+        await send(.presentSession(.stop))
+      }
     }
   }
 }

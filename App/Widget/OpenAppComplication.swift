@@ -1,4 +1,5 @@
 import ActivityWidgetUI
+import Shared
 import SwiftUI
 import WidgetKit
 
@@ -9,8 +10,8 @@ struct OpenAppComplication: Widget {
     StaticConfiguration(kind: kind, provider: ActivitySnapshotProvider()) { entry in
       OpenAppComplicationView(entry: entry)
     }
-    .configurationDisplayName("Open Activity Tracker")
-    .description("Tap to open the app and view your activity history.")
+    .configurationDisplayName(L10n.widgetOpenDisplayName)
+    .description(L10n.widgetOpenDescription)
     .supportedFamilies([.accessoryCircular])
   }
 }

@@ -33,9 +33,9 @@ public struct ActivityRingView: View {
 
   private var accessibilityLabel: String {
     if snapshot.isActive {
-      "Toggle activity, in progress, \(snapshot.todayCount) today"
+      L10n.toggleRingAccessibilityActive(count: snapshot.todayCount)
     } else {
-      "Toggle activity, not in progress, \(snapshot.todayCount) today"
+      L10n.toggleRingAccessibilityIdle(count: snapshot.todayCount)
     }
   }
 }

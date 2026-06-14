@@ -1,11 +1,11 @@
 import AppIntents
 import Dependencies
 import Database
-import WidgetKit
+import Shared
 
 enum IntentRuntime {
   static func reloadWidgetTimelines() {
-    WidgetCenter.shared.reloadAllTimelines()
+    WidgetSync.reloadAllTimelines()
   }
 
   static func performToggle() async throws {
@@ -30,5 +30,10 @@ enum IntentRuntime {
     @Dependency(\.activityDatabase) var database
     try await database.stop(date.now)
     reloadWidgetTimelines()
+  }
+
+  static func savePendingAction(_ action: PendingAction) {
+    @Dependency(\.pendingActionStore) var pendingActionStore
+    pendingActionStore.save(action)
   }
 }

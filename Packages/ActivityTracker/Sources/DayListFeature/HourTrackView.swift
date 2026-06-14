@@ -1,3 +1,4 @@
+import Shared
 import SwiftUI
 
 /// Horizontal 0–24 hour track with proportional activity segments.
@@ -21,6 +22,8 @@ public struct HourTrackView: View {
         }
       }
       .frame(height: 12)
+      .accessibilityElement(children: .ignore)
+      .accessibilityLabel(L10n.hourTrackAccessibility(segmentCount: segments.count))
 
       HStack(spacing: 0) {
         axisLabel("0")
@@ -30,6 +33,7 @@ public struct HourTrackView: View {
         axisLabel("24")
       }
       .frame(maxWidth: .infinity)
+      .accessibilityHidden(true)
     }
   }
 
@@ -45,19 +49,21 @@ private struct SegmentBar: View {
   let segment: ActivitySegment
   let trackWidth: CGFloat
 
+  @Environment(\.isLuminanceReduced) private var isLuminanceReduced
   @State private var pulse = false
 
   var body: some View {
     let width = max((segment.end - segment.start) * trackWidth, 2)
     let offset = segment.start * trackWidth
+    let shouldPulse = segment.isInProgress && !isLuminanceReduced
 
     RoundedRectangle(cornerRadius: 2)
       .fill(segment.isInProgress ? Color.accentColor.opacity(0.55) : Color.accentColor)
       .frame(width: width)
       .offset(x: offset)
-      .opacity(segment.isInProgress ? (pulse ? 1 : 0.65) : 1)
-      .task(id: segment.isInProgress) {
-        guard segment.isInProgress else { return }
+      .opacity(shouldPulse ? (pulse ? 1 : 0.65) : 1)
+      .task(id: shouldPulse) {
+        guard shouldPulse else { return }
         while !Task.isCancelled {
           withAnimation(.easeInOut(duration: 1)) {
             pulse.toggle()

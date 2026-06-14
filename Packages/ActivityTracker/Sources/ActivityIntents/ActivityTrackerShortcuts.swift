@@ -23,5 +23,17 @@ struct ActivityTrackerShortcuts: AppShortcutsProvider {
       shortTitle: "Stop Activity",
       systemImageName: "stop.fill"
     )
+    AppShortcut(
+      intent: StartActivityWithConfirmationIntent(),
+      phrases: ["Start activity with confirmation in \(.applicationName)"],
+      shortTitle: "Start (Confirm)",
+      systemImageName: "play.circle"
+    )
+    AppShortcut(
+      intent: StopActivityWithConfirmationIntent(),
+      phrases: ["Stop activity with confirmation in \(.applicationName)"],
+      shortTitle: "Stop (Confirm)",
+      systemImageName: "stop.circle"
+    )
   }
 }

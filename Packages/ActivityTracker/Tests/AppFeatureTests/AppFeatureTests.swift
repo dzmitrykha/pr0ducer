@@ -1,4 +1,5 @@
 import AppFeature
+import ActivitySessionFeature
 import ComposableArchitecture
 import CustomDump
 import Database
@@ -111,6 +112,66 @@ struct AppFeatureTests {
     await store.send(.dayList(.dayCardTapped(card))) {
       $0.selectedDay = card
     }
+  }
+
+  @Test func pendingConfirmStartPresentsSession() async {
+    let fixedDate = makeDate(year: 2026, month: 6, day: 14, hour: 10)
+    let database = try! DatabaseBootstrap.inMemory()
+    let client = ActivityDatabase.live(database: database)
+    let pendingStore = LockIsolated<PendingAction?>(.confirmStart)
+
+    let store = TestStore(initialState: AppFeature.State()) {
+      AppFeature()
+    } withDependencies: {
+      $0.activityDatabase = client
+      $0.calendar = makeCalendar()
+      $0.timeZone = makeCalendar().timeZone
+      $0.date.now = fixedDate
+      $0.pendingActionStore = PendingActionStore(
+        save: { action in pendingStore.setValue(action) },
+        consume: {
+          let action = pendingStore.value
+          pendingStore.setValue(nil)
+          return action
+        }
+      )
+    }
+    store.exhaustivity = .off
+
+    await store.send(.onAppear)
+    await store.skipReceivedActions()
+
+    #expect(store.state.session?.pendingAction == .start)
+  }
+
+  @Test func sessionFinishedRefreshesDayList() async {
+    let fixedDate = makeDate(year: 2026, month: 6, day: 14, hour: 10)
+    let database = try! DatabaseBootstrap.inMemory()
+    let client = ActivityDatabase.live(database: database)
+    let clock = TestClock()
+
+    let store = TestStore(
+      initialState: AppFeature.State(
+        session: ActivitySessionFeature.State(pendingAction: .start)
+      )
+    ) {
+      AppFeature()
+    } withDependencies: {
+      $0.activityDatabase = client
+      $0.calendar = makeCalendar()
+      $0.timeZone = makeCalendar().timeZone
+      $0.date.now = fixedDate
+      $0.continuousClock = clock
+      $0.pendingActionStore = .testValue
+    }
+    store.exhaustivity = .off
+
+    await store.send(.session(.presented(.onAppear)))
+    await clock.advance(by: .seconds(ActivitySessionFeature.State.countdownDuration))
+    await store.skipReceivedActions()
+
+    #expect(store.state.session == nil)
+    #expect(store.state.dayList.isLoading == false)
   }
 
   @Test func deepLinkParserRecognizesOpenRoute() {

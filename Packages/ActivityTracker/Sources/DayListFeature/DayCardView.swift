@@ -29,6 +29,7 @@ public struct DayCardView: View {
           .font(.system(size: 22, weight: .bold, design: .rounded))
           .monospacedDigit()
           .frame(width: Layout.countColumnWidth, alignment: .trailing)
+          .accessibilityHidden(true)
 
         HourTrackView(segments: card.segments)
           .frame(maxWidth: .infinity)
@@ -37,25 +38,28 @@ public struct DayCardView: View {
     .accessibilityElement(children: .combine)
     .accessibilityLabel(accessibilityLabel)
     .accessibilityAddTraits(.isButton)
-    .accessibilityHint("Opens day details")
+    .accessibilityHint(L10n.dayAccessibilityHint)
   }
 
   private var dayTitle: String {
     if calendar.isDate(card.date, inSameDayAs: referenceDate) {
-      return "Today"
+      return L10n.dayTitleToday
     }
     if
       let yesterday = calendar.date(byAdding: .day, value: -1, to: calendar.startOfDay(for: referenceDate)),
       calendar.isDate(card.date, inSameDayAs: yesterday)
     {
-      return "Yesterday"
+      return L10n.dayTitleYesterday
     }
     return Self.shortDateFormatter(calendar: calendar).string(from: card.date)
   }
 
   private var accessibilityLabel: String {
-    let segmentCount = card.segments.count
-    return "\(dayTitle), \(card.count) activities, \(segmentCount) segments on timeline"
+    L10n.dayAccessibilityLabel(
+      dayTitle: dayTitle,
+      count: card.count,
+      segmentCount: card.segments.count
+    )
   }
 
   private static func shortDateFormatter(calendar: Calendar) -> DateFormatter {

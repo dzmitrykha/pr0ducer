@@ -1,7 +1,7 @@
 import AppIntents
 
 public struct StartActivityIntent: AppIntent {
-  public static let title: LocalizedStringResource = "Start Activity"
+  public static let title: LocalizedStringResource = "intent.start.title"
   public static let description = IntentDescription(
     "Starts a new activity if none is in progress."
   )

@@ -1,5 +1,6 @@
 import ActivityIntents
 import ActivityWidgetUI
+import Shared
 import SwiftUI
 import WidgetKit
 
@@ -10,8 +11,8 @@ struct ToggleActivityComplication: Widget {
     StaticConfiguration(kind: kind, provider: ActivitySnapshotProvider()) { entry in
       ToggleActivityComplicationView(entry: entry)
     }
-    .configurationDisplayName("Toggle Activity")
-    .description("Tap to start or stop an activity without opening the app.")
+    .configurationDisplayName(L10n.widgetToggleDisplayName)
+    .description(L10n.widgetToggleDescription)
     .supportedFamilies([.accessoryCircular])
   }
 }

@@ -1,5 +1,6 @@
 import ComposableArchitecture
 import Dependencies
+import Shared
 import SwiftUI
 
 public struct DayListView: View {
@@ -15,6 +16,8 @@ public struct DayListView: View {
     Group {
       if store.cards.isEmpty, store.isLoading {
         ProgressView()
+      } else if isEmptyHistory {
+        EmptyDayListView()
       } else {
         ScrollView {
           LazyVStack(spacing: 10) {
@@ -51,7 +54,35 @@ public struct DayListView: View {
     .frame(maxWidth: .infinity, maxHeight: .infinity)
   }
 
+  private var isEmptyHistory: Bool {
+    !store.isLoading && store.cards.allSatisfy { $0.count == 0 && $0.segments.isEmpty }
+  }
+
   private var cardBackground: some ShapeStyle {
     Color.secondary.opacity(0.15)
+  }
+}
+
+private struct EmptyDayListView: View {
+  var body: some View {
+    VStack(spacing: 8) {
+      Image(systemName: "figure.run.circle")
+        .font(.system(size: 34))
+        .foregroundStyle(Color.accentColor)
+        .symbolRenderingMode(.hierarchical)
+        .accessibilityHidden(true)
+
+      Text(L10n.emptyTitle)
+        .font(.headline)
+        .multilineTextAlignment(.center)
+
+      Text(L10n.emptyMessage)
+        .font(.caption)
+        .foregroundStyle(.secondary)
+        .multilineTextAlignment(.center)
+    }
+    .padding(.horizontal, 8)
+    .accessibilityElement(children: .combine)
+    .accessibilityLabel("\(L10n.emptyTitle). \(L10n.emptyMessage)")
   }
 }

@@ -5,13 +5,17 @@ import Foundation
 /// A route persisted while the app is inactive, resolved on next activation.
 public enum PendingAction: String, Equatable, Sendable, Codable {
   case open
+  case confirmStart
+  case confirmStop
 }
 
 extension PendingAction {
-  public var deepLink: DeepLink {
+  public var deepLink: DeepLink? {
     switch self {
     case .open:
       .open
+    case .confirmStart, .confirmStop:
+      nil
     }
   }
 

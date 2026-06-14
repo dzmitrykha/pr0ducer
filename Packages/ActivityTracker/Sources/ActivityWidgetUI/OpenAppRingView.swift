@@ -33,6 +33,6 @@ public struct OpenAppRingView: View {
     }
     .padding(2)
     .accessibilityElement(children: .ignore)
-    .accessibilityLabel("Open activity history, \(snapshot.todayCount) today")
+    .accessibilityLabel(L10n.openRingAccessibility(count: snapshot.todayCount))
   }
 }

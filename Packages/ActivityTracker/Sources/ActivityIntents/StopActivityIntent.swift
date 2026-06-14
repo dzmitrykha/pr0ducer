@@ -1,7 +1,7 @@
 import AppIntents
 
 public struct StopActivityIntent: AppIntent {
-  public static let title: LocalizedStringResource = "Stop Activity"
+  public static let title: LocalizedStringResource = "intent.stop.title"
   public static let description = IntentDescription(
     "Stops the activity currently in progress."
   )

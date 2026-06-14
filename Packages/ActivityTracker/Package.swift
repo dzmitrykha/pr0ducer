@@ -30,6 +30,9 @@ let package = Package(
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
         .product(name: "DependenciesMacros", package: "swift-dependencies"),
+      ],
+      resources: [
+        .process("Resources"),
       ]
     ),
     .target(
@@ -124,8 +127,12 @@ let package = Package(
       name: "ActivitySessionFeatureTests",
       dependencies: [
         "ActivitySessionFeature",
+        "Database",
+        "Shared",
         .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
         .product(name: "CustomDump", package: "swift-custom-dump"),
+        .product(name: "Dependencies", package: "swift-dependencies"),
+        .product(name: "DependenciesTestSupport", package: "swift-dependencies"),
       ]
     ),
     .testTarget(
