@@ -22,6 +22,6 @@ private struct OpenAppComplicationView: View {
   var body: some View {
     OpenAppRingView(snapshot: entry.snapshot)
       .widgetURL(URL(string: "activitytracker://open")!)
-      .containerBackground(.fill.tertiary, for: .widget)
+      .containerBackground(for: .widget) {}
   }
 }

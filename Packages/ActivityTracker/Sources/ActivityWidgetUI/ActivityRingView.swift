@@ -3,6 +3,11 @@ import SwiftUI
 
 /// Circular activity ring with today's count — shared by complications and the app.
 public struct ActivityRingView: View {
+  private enum Layout {
+    /// Softens accented ring elements so primary (white) text stays readable.
+    static let accentOpacity = 0.45
+  }
+
   private let snapshot: WidgetSnapshot
 
   public init(snapshot: WidgetSnapshot) {
@@ -13,16 +18,20 @@ public struct ActivityRingView: View {
     ZStack {
       if snapshot.isActive {
         Circle()
-          .fill(Color.accentColor)
+          .fill(.foreground)
+          .opacity(Layout.accentOpacity)
+          .widgetAccentable()
       } else {
         Circle()
-          .strokeBorder(Color.accentColor, lineWidth: 2)
+          .strokeBorder(.foreground, lineWidth: 2)
+          .opacity(Layout.accentOpacity)
+          .widgetAccentable()
       }
 
       Text(snapshot.countDisplayText)
         .font(.system(size: 20, weight: .bold, design: .rounded))
         .monospacedDigit()
-        .foregroundStyle(snapshot.isActive ? Color.black : Color.primary)
+        .foregroundStyle(.primary)
         .minimumScaleFactor(0.5)
         .lineLimit(1)
     }

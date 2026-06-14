@@ -25,6 +25,6 @@ private struct ToggleActivityComplicationView: View {
       ActivityRingView(snapshot: entry.snapshot)
     }
     .buttonStyle(.plain)
-    .containerBackground(.fill.tertiary, for: .widget)
+    .containerBackground(for: .widget) {}
   }
 }

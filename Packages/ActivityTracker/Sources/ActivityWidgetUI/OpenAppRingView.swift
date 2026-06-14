@@ -13,22 +13,22 @@ public struct OpenAppRingView: View {
     ZStack {
       Circle()
         .strokeBorder(
-          Color.secondary.opacity(0.8),
+          .foreground,
           style: StrokeStyle(lineWidth: 1.5, dash: [3, 2])
         )
+        .widgetAccentable()
 
       VStack(spacing: 1) {
         Text(snapshot.countDisplayText)
           .font(.system(size: 11, weight: .semibold, design: .rounded))
           .monospacedDigit()
-          .foregroundStyle(.secondary)
+          .foregroundStyle(.primary)
           .minimumScaleFactor(0.5)
           .lineLimit(1)
 
         Image(systemName: "list.bullet")
           .font(.system(size: 14, weight: .semibold))
-          .foregroundStyle(Color.accentColor)
-          .symbolRenderingMode(.hierarchical)
+          .widgetAccentable()
       }
     }
     .padding(2)
