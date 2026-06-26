@@ -1,0 +1,74 @@
+# Pipeline manifest for the pr0ducer consumer iOS product (#123 / #135).
+# Source of truth: ai-factory ConsumerIosProductConfig.RenderFactoryManifest().
+
+repo: dzmitrykha/pr0ducer
+
+skill_packs:
+  - ~/.agents/skills/pfw-composable-architecture
+  - ~/.agents/skills/pfw-observable-models
+  - ~/.agents/skills/pfw-swift-navigation
+  - ~/.agents/skills/pfw-case-paths
+  - ~/.agents/skills/pfw-perception
+  - ~/.agents/skills/pfw-dependencies
+  - ~/.agents/skills/pfw-issue-reporting
+  - ~/.agents/skills/pfw-sharing
+  - ~/.agents/skills/pfw-identified-collections
+  - ~/.agents/skills/pfw-sqlite-data
+  - ~/.agents/skills/pfw-structured-queries
+  - ~/.agents/skills/swiftui-expert-skill
+  - ~/.agents/skills/pfw-modern-swiftui
+  - ~/.agents/skills/swift-concurrency
+  - ~/.agents/skills/pfw-testing
+  - ~/.agents/skills/pfw-snapshot-testing
+  - ~/.agents/skills/pfw-macro-testing
+  - ~/.agents/skills/pfw-custom-dump
+  - ~/.agents/skills/pfw-spm
+  - github.com/dkharevichinn/ai-factory@fb537ab282d43b3510064186813cf7d0171e328a#skill-packs/ios-spm-boundary
+
+agents:
+  analyst:
+    runtime: cursor
+    model: composer-2.5
+    max_attempts: 3
+    timeout_min: 15
+
+  decomposer:
+    runtime: cursor
+    model: composer-2.5
+    max_attempts: 2
+    timeout_min: 15
+
+  developer:
+    runtime: cursor
+    model: composer-2.5
+    max_attempts: 3
+    timeout_min: 45
+    verify: "(cd App && xcodegen generate) && swift test --package-path Packages/ActivityTracker && xcodebuild -project App/ActivityTracker.xcodeproj -scheme ActivityTracker -destination 'platform=watchOS Simulator,name=Apple Watch Series 11 (46mm)' test && gh pr list --json body,title --jq '.[] | select((.title + .body) | contains("#{issue}"))' | grep -q ."
+
+  architecture_gate:
+    analyze: "bash scripts/analyze.sh {issue}"
+    timeout_min: 25
+
+  reviewer:
+    runtime: cursor
+    model: composer-2.5
+    max_attempts: 2
+    timeout_min: 15
+
+  integration_tester:
+    runtime: cursor
+    model: composer-2.5
+    max_attempts: 2
+    timeout_min: 20
+    prepare: "bash scripts/prepare-integration-sandbox.sh {issue}"
+    workdir: ".ai-factory/integration/issue-{issue}"
+
+budgets:
+  per_issue_usd: 4.00
+  per_stage_timeout_min: 45
+
+pricing:
+  composer-2.5:
+    input_per_mtok: 0.50
+    output_per_mtok: 2.50
+    cache_read_per_mtok: 0.20

@@ -14,6 +14,9 @@ Packages/**/.build/
 # macOS
 .DS_Store
 
+# ai-factory per-project state (logs, cases, sandboxes)
+.ai-factory/
+
 # Secrets
 *.env
 .env.*
