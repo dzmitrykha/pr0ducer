@@ -43,7 +43,7 @@ agents:
     model: composer-2.5
     max_attempts: 3
     timeout_min: 45
-    verify: "(cd App && xcodegen generate) && swift test --package-path Packages/ActivityTracker && xcodebuild -project App/ActivityTracker.xcodeproj -scheme ActivityTracker -destination 'platform=watchOS Simulator,name=Apple Watch Series 11 (46mm)' test && gh pr list --json body,title --jq '.[] | select((.title + .body) | contains("#{issue}"))' | grep -q ."
+    verify: "(cd App && xcodegen generate) && swift test --package-path Packages/ActivityTracker && xcodebuild -project App/ActivityTracker.xcodeproj -scheme ActivityTracker -destination 'platform=watchOS Simulator,name=Apple Watch Series 11 (46mm)' test && gh pr list --json body,title --jq '.[] | select((.title + .body) | contains(\"#{issue}\"))' | grep -q ."
 
   architecture_gate:
     analyze: "bash scripts/analyze.sh {issue}"
