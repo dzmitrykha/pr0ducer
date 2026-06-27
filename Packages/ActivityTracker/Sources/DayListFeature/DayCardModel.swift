@@ -25,6 +25,7 @@ public struct DayCard: Equatable, Sendable, Identifiable {
   public var id: Date { date }
 
   public var isEmpty: Bool {
+    // swiftlint:disable:next empty_count
     count == 0 && segments.isEmpty
   }
 

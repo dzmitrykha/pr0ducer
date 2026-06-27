@@ -113,7 +113,7 @@ struct DayCardModelTests {
     let cards = makeDayCards(activities: [], calendar: calendar, now: now, dayCount: 3)
 
     #expect(cards.count == 3)
-    #expect(cards.allSatisfy { $0.count == 0 && $0.segments.isEmpty })
+    #expect(cards.allSatisfy { $0.isEmpty })
   }
 
   @Test func isEmptyIsTrueForZeroActivityDay() {
