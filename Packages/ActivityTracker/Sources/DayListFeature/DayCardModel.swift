@@ -24,6 +24,10 @@ public struct DayCard: Equatable, Sendable, Identifiable {
 
   public var id: Date { date }
 
+  public var isEmpty: Bool {
+    count == 0 && segments.isEmpty
+  }
+
   public init(date: Date, count: Int, segments: [ActivitySegment]) {
     self.date = date
     self.count = count
