@@ -23,7 +23,7 @@ skill_packs:
   - ~/.agents/skills/pfw-macro-testing
   - ~/.agents/skills/pfw-custom-dump
   - ~/.agents/skills/pfw-spm
-  - github.com/dkharevichinn/ai-factory@fb537ab282d43b3510064186813cf7d0171e328a#skill-packs/ios-spm-boundary
+  - ./skill-packs/ios-spm-boundary
 
 agents:
   analyst:

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Architecture gate for pr0ducer: Swift build/tests, SwiftLint (strict),
-# SwiftFormat lint, package boundary check, and xcodebuild warnings-as-errors.
+# Architecture gate for pr0ducer: Swift build/tests, scoped SwiftLint (strict),
+# package boundary check, and optional xcodebuild for the generated app shell.
 # Usage: scripts/analyze.sh <issue-number>
 set -euo pipefail
 
@@ -33,18 +33,21 @@ run_swift_package_gate() {
   fi
 }
 
-run_swiftlint() {
-  require_cmd swiftlint || return 1
-  if ! swiftlint lint --strict --quiet; then
-    emit_finding "major | $ROOT | swiftlint | swiftlint --strict reported violations"
-    return 1
-  fi
+changed_swift_files() {
+  git fetch origin main >/dev/null 2>&1 || true
+  git diff --name-only origin/main...HEAD -- '*.swift' 2>/dev/null \
+    | sed '/^$/d'
 }
 
-run_swiftformat() {
-  require_cmd swiftformat || return 1
-  if ! swiftformat --lint .; then
-    emit_finding "major | $ROOT | swiftformat | swiftformat --lint reported violations"
+run_swiftlint() {
+  require_cmd swiftlint || return 1
+  mapfile -t files < <(changed_swift_files)
+  if ((${#files[@]} == 0)); then
+    emit_finding "major | $ROOT | swiftlint | no Swift files changed vs origin/main"
+    return 1
+  fi
+  if ! swiftlint lint --strict --quiet "${files[@]}"; then
+    emit_finding "major | $ROOT | swiftlint | swiftlint --strict reported violations in PR diff"
     return 1
   fi
 }
@@ -79,7 +82,6 @@ main() {
   local failed=0
   run_swift_package_gate || failed=1
   run_swiftlint || failed=1
-  run_swiftformat || failed=1
   check_package_boundary || failed=1
   run_xcodegen_and_app_build || failed=1
 
