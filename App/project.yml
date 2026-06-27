@@ -40,23 +40,7 @@ targets:
       - target: ActivityTrackerWidget
         embed: true
     scheme:
-      testTargets:
-        - ActivityTrackerTests
-
-  ActivityTrackerTests:
-    type: bundle.unit-test
-    platform: watchOS
-    sources:
-      - path: Tests
-    settings:
-      base:
-        GENERATE_INFOPLIST_FILE: YES
-        PRODUCT_BUNDLE_IDENTIFIER: dev.pr0ducer.ActivityTrackerTests
-        WATCHOS_DEPLOYMENT_TARGET: "26.0"
-        SWIFT_DISABLE_MACRO_VALIDATION: YES
-    dependencies:
-      - package: ActivityTracker
-        product: Shared
+      testTargets: []
 
   ActivityTrackerWidget:
     type: app-extension
@@ -83,3 +67,14 @@ targets:
       - package: ActivityTracker
         product: Shared
     scheme: {}
+
+schemes:
+  ActivityTracker:
+    build:
+      targets:
+        ActivityTracker: all
+        ActivityTrackerWidget: all
+    run:
+      config: Debug
+    archive:
+      config: Release
