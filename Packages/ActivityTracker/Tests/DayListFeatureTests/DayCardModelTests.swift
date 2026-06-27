@@ -48,6 +48,7 @@ struct DayCardModelTests {
     #expect(cards[1].date == firstDay)
 
     #expect(cards[1].count == 1)
+    // swiftlint:disable:next empty_count
     #expect(cards[0].count == 0)
 
     #expect(cards[1].segments.count == 1)
@@ -113,7 +114,29 @@ struct DayCardModelTests {
     let cards = makeDayCards(activities: [], calendar: calendar, now: now, dayCount: 3)
 
     #expect(cards.count == 3)
-    #expect(cards.allSatisfy { $0.count == 0 && $0.segments.isEmpty })
+    #expect(cards.allSatisfy { $0.isEmpty })
+  }
+
+  @Test func isEmptyIsTrueForZeroActivityDay() {
+    let calendar = makeCalendar()
+    let day = makeDate(year: 2026, month: 6, day: 14, hour: 0, calendar: calendar)
+    let card = DayCard(date: day, count: 0, segments: [])
+
+    #expect(card.isEmpty)
+  }
+
+  @Test func isEmptyIsFalseForDayWithActivities() {
+    let calendar = makeCalendar()
+    let day = makeDate(year: 2026, month: 6, day: 14, hour: 0, calendar: calendar)
+    let segment = ActivitySegment(
+      id: UUID(uuidString: "00000000-0000-0000-0000-000000000006")!,
+      start: 0.25,
+      end: 0.5,
+      isInProgress: false
+    )
+    let card = DayCard(date: day, count: 1, segments: [segment])
+
+    #expect(!card.isEmpty)
   }
 }
 
