@@ -48,7 +48,8 @@ struct DayCardModelTests {
     #expect(cards[1].date == firstDay)
 
     #expect(cards[1].count == 1)
-    #expect(cards[0].isEmpty)
+    // swiftlint:disable:next empty_count
+    #expect(cards[0].count == 0)
 
     #expect(cards[1].segments.count == 1)
     #expect(cards[1].segments[0].start.isApproximatelyEqual(to: 23.5 / 24.0))
