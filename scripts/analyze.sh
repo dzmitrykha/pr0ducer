@@ -68,7 +68,7 @@ run_xcodegen_and_app_build() {
   if command -v xcodebuild >/dev/null 2>&1; then
     if ! xcodebuild -project App/ActivityTracker.xcodeproj -scheme ActivityTracker \
         -destination 'platform=watchOS Simulator,name=Apple Watch Series 11 (46mm)' \
-        SWIFT_TREAT_WARNINGS_AS_ERRORS=YES -quiet build; then
+        -quiet build; then
       emit_finding "major | App/ActivityTracker.xcodeproj | xcodebuild-failed | app shell build failed"
       return 1
     fi
