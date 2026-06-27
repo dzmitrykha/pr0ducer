@@ -41,7 +41,11 @@ changed_swift_files() {
 
 run_swiftlint() {
   require_cmd swiftlint || return 1
-  mapfile -t files < <(changed_swift_files)
+  local files=()
+  local file
+  while IFS= read -r file; do
+    [[ -n "$file" ]] && files+=("$file")
+  done < <(changed_swift_files)
   if ((${#files[@]} == 0)); then
     emit_finding "major | $ROOT | swiftlint | no Swift files changed vs origin/main"
     return 1
